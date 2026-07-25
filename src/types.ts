@@ -37,6 +37,9 @@ export interface LocationInfo {
   city: string;
   address: string;
   rating: number;
+  gateName?: string; // e.g. "Gate A - Jinnah Ave" or "OPD Emergency Gate 1"
+  basePrice?: number; // e.g. 3.50
+  category?: string;
   floors: FloorPlan[];
 }
 

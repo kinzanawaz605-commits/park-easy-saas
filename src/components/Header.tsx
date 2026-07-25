@@ -235,7 +235,43 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showLocDropdown && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 py-2 max-h-96 overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 py-2 max-h-[80vh] overflow-y-auto">
+                {/* Custom Venue Inline Type & Apply Form */}
+                <div className="px-3 py-2.5 bg-indigo-50/80 border-b border-indigo-100 mb-1">
+                  <div className="text-[11px] font-extrabold text-indigo-950 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    <span>Add Custom Location</span>
+                    <span className="text-[9px] text-indigo-600 font-bold bg-white px-1.5 py-0.5 rounded border border-indigo-200">
+                      Type Anything
+                    </span>
+                  </div>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const input = form.elements.namedItem('customVenueInput') as HTMLInputElement;
+                      if (input && input.value.trim()) {
+                        onCustomLocationSubmit(input.value.trim());
+                        input.value = '';
+                        setShowLocDropdown(false);
+                      }
+                    }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <input
+                      name="customVenueInput"
+                      type="text"
+                      placeholder="e.g. Grand Plaza, Sector F-7..."
+                      className="flex-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-xl text-xs text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 font-medium placeholder:text-slate-400"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                    >
+                      Apply
+                    </button>
+                  </form>
+                </div>
+
                 <div className="px-4 py-1 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
                   Select Venue & Floor
                 </div>

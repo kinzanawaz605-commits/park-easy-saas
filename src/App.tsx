@@ -260,6 +260,7 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto flex flex-col lg:flex-row shadow-xs">
         {/* Left 2D Interactive Parking Lot Canvas */}
         <ParkingLotGrid
+          key={`${selectedLocationId}-${selectedFloorId}`}
           floors={currentFloors}
           selectedFloorId={selectedFloorId}
           onSelectFloor={handleSelectFloor}
@@ -294,6 +295,9 @@ export default function App() {
         <WayfindingModal
           pass={activeModalPass}
           spotCode={wayfindingModalSpotCode}
+          locationName={currentLocation?.name}
+          gateName={currentLocation?.gateName}
+          floorName={currentFloor?.name}
           onClose={() => setWayfindingModalSpotCode(null)}
           onBackToPass={() => {
             setWayfindingModalSpotCode(null);

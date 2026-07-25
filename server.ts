@@ -85,38 +85,116 @@ app.post('/api/locations/custom', (req, res) => {
   const floor1Id = `fl-${locId}-1`;
   const floor2Id = `fl-${locId}-2`;
 
+  // Generate prefix from cleanName
+  const words = cleanName.split(/\s+/);
+  const prefixStr = words.length > 1
+    ? (words[0][0] + words[1][0]).toUpperCase()
+    : cleanName.substring(0, 2).toUpperCase();
+
+  const lower = cleanName.toLowerCase();
+  let category = 'Custom Venues';
+  let gateName = `Gate A - ${cleanName} Main Entrance`;
+  let basePrice = 3.5;
+  let floor1Name = 'Level 1 - Express Deck';
+  let floor2Name = 'Level 2 - Central Deck';
+  let floor1Desc = 'Main Entrance & Express Bay Slots';
+  let floor2Desc = 'Elevator Lobby & EV Charging Station';
+  let spotCount1 = 32;
+  let spotCount2 = 28;
+
+  if (
+    lower.includes('hospital') ||
+    lower.includes('pims') ||
+    lower.includes('shifa') ||
+    lower.includes('clinic') ||
+    lower.includes('medical') ||
+    lower.includes('health') ||
+    lower.includes('opd') ||
+    lower.includes('emergency')
+  ) {
+    category = 'Hospitals';
+    gateName = `OPD Emergency Gate 1 - ${cleanName}`;
+    basePrice = 2.0;
+    floor1Name = 'Emergency & OPD Deck';
+    floor2Name = 'Trauma & Visitor Deck';
+    floor1Desc = '24/7 Priority Emergency & Ambulance Bay';
+    floor2Desc = 'Outpatient Pavilion & Laboratory Access';
+    spotCount1 = 24;
+    spotCount2 = 20;
+  } else if (
+    lower.includes('mall') ||
+    lower.includes('plaza') ||
+    lower.includes('hyper') ||
+    lower.includes('market') ||
+    lower.includes('bazaar') ||
+    lower.includes('store') ||
+    lower.includes('giga') ||
+    lower.includes('emporium') ||
+    lower.includes('centaurus')
+  ) {
+    category = 'Shopping';
+    gateName = `Main Concourse Gate - ${cleanName}`;
+    basePrice = 4.0;
+    floor1Name = 'Concourse Express Deck';
+    floor2Name = 'Hypermarket & Cinema Deck';
+    floor1Desc = 'Main Retail Plaza & Direct Concourse Ramp';
+    floor2Desc = 'Multiplex Elevators & Food Court Access';
+    spotCount1 = 48;
+    spotCount2 = 40;
+  } else if (
+    lower.includes('tower') ||
+    lower.includes('building') ||
+    lower.includes('office') ||
+    lower.includes('corporate') ||
+    lower.includes('financial') ||
+    lower.includes('center') ||
+    lower.includes('hub')
+  ) {
+    category = 'Commercial Hubs';
+    gateName = `Executive Ramp 1 - ${cleanName}`;
+    basePrice = 6.0;
+    floor1Name = 'Level B1 - Corporate Fleet Deck';
+    floor2Name = 'Level B2 - Executive Suite Deck';
+    floor1Desc = 'Executive Tower & Corporate Offices';
+    floor2Desc = 'Reserved VIP & Boardroom Suite Bay';
+    spotCount1 = 36;
+    spotCount2 = 28;
+  }
+
   const newLoc = {
     id: locId,
     name: cleanName,
     city: 'Custom Venue',
-    address: 'Main Concourse & Direct Deck',
+    address: 'Main Concourse & Direct Access Deck',
     rating: 5.0,
-    category: 'Custom Venues',
+    category,
+    gateName,
+    basePrice,
     floors: [
       {
         id: floor1Id,
-        name: 'Level 1 - Express',
-        description: 'Main Concourse Deck & Priority Slots',
-        totalSpots: 32,
-        availableSpots: 16,
-        occupiedSpots: 12,
-        reservedSpots: 4,
+        name: floor1Name,
+        description: floor1Desc,
+        totalSpots: spotCount1,
+        availableSpots: Math.floor(spotCount1 * 0.45),
+        occupiedSpots: Math.floor(spotCount1 * 0.45),
+        reservedSpots: Math.floor(spotCount1 * 0.1),
       },
       {
         id: floor2Id,
-        name: 'Level 2 - Concourse',
-        description: 'Elevator Lobby & EV Fast Charger Bay',
-        totalSpots: 32,
-        availableSpots: 18,
-        occupiedSpots: 10,
-        reservedSpots: 4,
+        name: floor2Name,
+        description: floor2Desc,
+        totalSpots: spotCount2,
+        availableSpots: Math.floor(spotCount2 * 0.5),
+        occupiedSpots: Math.floor(spotCount2 * 0.4),
+        reservedSpots: Math.floor(spotCount2 * 0.1),
       },
     ],
   };
 
   locations.unshift(newLoc);
-  spotMap[floor1Id] = generateFloorSpots(floor1Id, 32);
-  spotMap[floor2Id] = generateFloorSpots(floor2Id, 32);
+  spotMap[floor1Id] = generateFloorSpots(floor1Id, spotCount1, basePrice, prefixStr);
+  spotMap[floor2Id] = generateFloorSpots(floor2Id, spotCount2, basePrice + 0.5, `${prefixStr}2`);
   updateFloorMetrics(floor1Id);
   updateFloorMetrics(floor2Id);
 
